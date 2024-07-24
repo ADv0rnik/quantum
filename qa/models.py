@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -37,6 +38,9 @@ class Session(models.Model):
         related_name="session_detector",
     )
 
+    def __str__(self):
+        return f"{self.pk}"
+
 
 class SessionData(models.Model):
     session = models.OneToOneField(
@@ -62,8 +66,14 @@ class SessionData(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def date_to_string(self):
+        date = str(self.created_at)
+        dt = datetime.strptime(date, "%Y-%m-%d %H:%M:%S.%f%z")
+        formatted_date = dt.strftime("%B %d %Y - %H:%M:%S")
+        return formatted_date
+
     def __str__(self):
-        return f"{self.session.verbose_name} - {self.pk}"
+        return f"{self.pk} - {self.date_to_string()}"
 
     class Meta:
         verbose_name = _("Session Data")
