@@ -1,20 +1,15 @@
 from django.contrib import admin
-from qa.models import Detector, Session, SessionData, Spectrum, Nuclide
+from qa.models import Detector, SessionData, Spectrum, Nuclide
 
 
 class NuclideInline(admin.TabularInline):
-    model = Nuclide
-    readonly_fields = ("created_at",)
+    model = Nuclide.spectra.through
 
 
 class SpectrumInline(admin.TabularInline):
     model = Spectrum
     readonly_fields = ("created_at",)
-
-
-class SessionDataInLine(admin.TabularInline):
-    model = SessionData
-    readonly_fields = ("created_at", "updated_at",)
+    fields = ["centroid", "net_count"]
 
 
 @admin.register(Detector)
@@ -28,8 +23,18 @@ class SessionDataAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at",)
     inlines = [SpectrumInline]
 
-# through - for m2m relationship
-# @admin.register(Spectrum)
-# class SpectrumAdmin(admin.ModelAdmin):
-#     readonly_fields = ("created_at",)
-#     inlines = [NuclideInline]
+
+@admin.register(Spectrum)
+class SpectrumAdmin(admin.ModelAdmin):
+    readonly_fields = ("created_at",)
+    list_display = ["get_nuclide"]
+    inlines = [NuclideInline]
+    exclude = ("spectrums",)
+
+    def get_nuclide(self, obj):
+        return [nuclide.name for nuclide in obj.nuclides.all()]
+
+
+@admin.register(Nuclide)
+class NuclideAdmin(admin.ModelAdmin):
+    pass
