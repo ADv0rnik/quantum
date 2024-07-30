@@ -1,7 +1,6 @@
 from datetime import datetime
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.utils import timezone
 
 
 class Detector(models.Model):
@@ -84,14 +83,36 @@ class SessionData(models.Model):
         return formatted_date
 
     def __str__(self):
-        return f"{self.pk} - {self.sample_name}"
+        return f"{self.sample_name}: {self.date_to_string()}"
 
     class Meta:
         verbose_name = _("Session Data")
         verbose_name_plural = _("Session Data")
 
 
-class Spectrum(models.Model):
+class Nuclide(models.Model):
+    name = models.CharField(
+        verbose_name=_("Name"),
+        max_length=100,
+        null=False,
+    )
+    energy = models.DecimalField(
+        verbose_name=_("Energy"),
+        max_digits=10,
+        decimal_places=2,
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.name} - {self.energy}"
+
+    class Meta:
+        verbose_name = _("Nuclide")
+        verbose_name_plural = _("Nuclides")
+
+
+class Roi(models.Model):
     class RoiType(models.TextChoices):
         ROI = "ROI", _("ROI")
         INSERT = "INSERT", _("Insert")
@@ -114,36 +135,18 @@ class Spectrum(models.Model):
         default=RoiType.ROI,
         max_length=10
     )
+    nuclide = models.ForeignKey(
+        Nuclide,
+        on_delete=models.CASCADE,
+        related_name="roi"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.pk} - {self.net_count}"
+        return f"Isotope: {self.nuclide.name}, with centroid in {self.centroid}"
 
     class Meta:
-        verbose_name = _("Spectrum")
+        verbose_name = _("ROI")
         verbose_name_plural = _("Spectra")
         ordering = ["created_at"]
-
-
-class Nuclide(models.Model):
-    name = models.CharField(
-        verbose_name=_("Name"),
-        max_length=100,
-        null=False,
-    )
-    energy = models.DecimalField(
-        verbose_name=_("Energy"),
-        max_digits=10,
-        decimal_places=2,
-    )
-    spectra = models.ManyToManyField(Spectrum, related_name="nuclides")
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f"{self.name} - {self.energy}"
-
-    class Meta:
-        verbose_name = _("Nuclide")
-        verbose_name_plural = _("Nuclides")
