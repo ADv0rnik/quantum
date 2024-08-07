@@ -1,9 +1,15 @@
 from django.shortcuts import render
-from django.views.generic import ListView
+from qa.models import Detector
 
 
 def index(request):
+    detectors = Detector.objects.all()
     context = {
-        "title": "Quantum - dashboard"
+        "title": "Quantum - dashboard",
+        "detectors": detectors
     }
     return render(request, 'dashboard.html', context=context)
+
+
+def get_data(request):
+    pass
