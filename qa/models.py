@@ -41,7 +41,7 @@ class Detector(models.Model):
 
 
 class SessionData(models.Model):
-    detector = models.OneToOneField(
+    detector = models.ForeignKey(
         Detector,
         on_delete=models.CASCADE,
         related_name="session_detector",
@@ -73,6 +73,14 @@ class SessionData(models.Model):
         blank=True,
         null=True
     )
+    measurement_date = models.DateField(
+        _("Measurement Date"),
+        default=datetime.today,
+    )
+    is_reference = models.BooleanField(
+        verbose_name=_("Is Reference"),
+        default=False
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -91,6 +99,13 @@ class SessionData(models.Model):
 
 
 class Nuclide(models.Model):
+    class HalflifeTimeUnits(models.TextChoices):
+        sec = "Sec", _("Seconds")
+        min = "Min", _("Minutes")
+        hour = "Hour", _("Hours")
+        day = "Day", _("Days")
+        year = "Year", _("Years")
+
     name = models.CharField(
         verbose_name=_("Name"),
         max_length=100,
@@ -100,6 +115,18 @@ class Nuclide(models.Model):
         verbose_name=_("Energy"),
         max_digits=10,
         decimal_places=2,
+    )
+    halflife_time = models.DecimalField(
+        _("Halflife Time"),
+        max_digits=5,
+        decimal_places=1,
+        default=1,
+    )
+    halflife_time_units = models.CharField(
+        _("Halflife Time Units"),
+        choices=HalflifeTimeUnits.choices,
+        default=HalflifeTimeUnits.year,
+        max_length=10
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -130,6 +157,13 @@ class Roi(models.Model):
     net_count = models.PositiveBigIntegerField(
         verbose_name=_("Net Count")
     )
+    decay_corr = models.DecimalField(
+        verbose_name=_("Decay Correction"),
+        max_digits=10,
+        decimal_places=2,
+        blank=True,
+        null=True
+    )
     roi_type = models.CharField(
         choices=RoiType.choices,
         default=RoiType.ROI,
@@ -142,6 +176,20 @@ class Roi(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    @property
+    def calculate_decay_correction(self):
+        from math import exp, log
+
+        ref_date = SessionData.objects.filter(is_reference=True).first()
+        date_curr = self.session_data.measurement_date
+        lifetime = float(self.session_data.lifetime)
+        halflife = float(self.nuclide.halflife_time)
+        units = self.nuclide.halflife_time_units
+        diff = date_curr - ref_date.measurement_date
+        if units == "Year":
+            halflife = halflife * 365.25
+        return round(exp((log(2)/halflife) * diff.days) * self.net_count / lifetime, 2)
 
     def __str__(self):
         return f"Isotope: {self.nuclide.name}, with centroid in {self.centroid}"

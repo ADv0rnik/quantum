@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="title p-3 m-3 text-center bg-light border border-opacity-50 border-info rounded-3">
+        <h4>Quality Assurance managing panel</h4>
+    </div>
+    <div class="row bg-light p-3 m-3 border border-opacity-50 border-info rounded-3">
+        <div class="col-sm-3">
+            <div class="d-flex flex-column flex-shrink-0" style="width: 100%;">
+                <span class="text-center fw-bold pt-2">Parameters</span>
+                <hr class="d-flex" style="width: 100%; border-width:0; margin: 0.5rem">
+            </div>
+            <div class="modal-body mx-3">
+                <form action="#" method="post" autocomplete="off">
+                    {% csrf_token %}
+                    <div class="form-floating mb-3 ">
+                        <select class="form-select rounded-3" name="countries" id="select" style="height: 2.5rem; width: 100%; padding-bottom: 0.5rem; padding-top: 0.5rem">
+                            <option value="">Choose detector</option>
+                            {% for detector in detectors %}
+                                <option value="{{ detector.code }}">{{ detector.code }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button class="btn rounded-3 btn-warning" type="submit" style="max-width: 100%">Apply</button>
+                </form>
+            </div>
+        </div>
+        <div class="col">
+            <ul class="nav nav-tabs nav-justified" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active text-dark fw-bold" id="home-tab" data-bs-toggle="tab"
+                            data-bs-target="#home-tab-pane"
+                            type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Datasheet
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link text-dark fw-bold" id="profile-tab" data-bs-toggle="tab"
+                            data-bs-target="#profile-tab-pane"
+                            type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Plots
+                    </button>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active p-3" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab"
+                     tabindex="0">Welcome to SB Admin Pro!
+                    Browse our fully designed UI toolkit! Browse our prebuilt app pages, components, and utilites, and
+                    be sure to look at our full documentation!
+                </div>
+                <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab"
+                     tabindex="0">...
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
