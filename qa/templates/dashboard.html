@@ -2,20 +2,20 @@
 
 {% block content %}
 <div class="container-fluid">
-    <div class="title p-3 m-3 text-center bg-light border border-light rounded-3">
-        <h4>Quality Assurance administration panel</h4>
+    <div class="title p-3 m-3 text-center bg-light border border-opacity-50 border-info rounded-3">
+        <h4>Quality Assurance managing panel</h4>
     </div>
-    <div class="row bg-light p-3 m-3 border border-light rounded-3">
+    <div class="row bg-light p-3 m-3 border border-opacity-50 border-info rounded-3">
         <div class="col-sm-3">
-            <div class="d-flex flex-column flex-shrink-0" style="width: 280px;">
+            <div class="d-flex flex-column flex-shrink-0" style="width: 100%;">
                 <span class="text-center fw-bold pt-2">Parameters</span>
-                <hr class="d-flex" style="margin: 0.5rem">
+                <hr class="d-flex" style="width: 100%; border-width:0; margin: 0.5rem">
             </div>
-            <div class="modal-body mx-auto">
+            <div class="modal-body mx-3">
                 <form action="#" method="post" autocomplete="off">
                     {% csrf_token %}
-                    <div class="form-floating mb-3">
-                        <select class="form-select rounded-3" name="countries" id="select" style="height: 2.5rem; padding-bottom: 0.5rem; padding-top: 0.5rem">
+                    <div class="form-floating mb-3 ">
+                        <select class="form-select rounded-3" name="countries" id="select" style="height: 2.5rem; width: 100%; padding-bottom: 0.5rem; padding-top: 0.5rem">
                             <option value="">Choose detector</option>
                             {% for detector in detectors %}
                                 <option value="{{ detector.code }}">{{ detector.code }}</option>
