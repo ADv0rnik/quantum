@@ -19,7 +19,7 @@
                                         style="height: 2.5rem;">
                                     <option value="">Choose detector</option>
                                     {% for detector in detectors %}
-                                        <option value="{{ detector.code }}">{{ detector.code }}</option>
+                                    <option value="{{ detector.code }}">{{ detector.code }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -57,29 +57,63 @@
                                 <div class="table-responsive">
                                     <div class="table-responsive">
                                         <table id="session-data"
-                                               class="table table-borderless table-hover display compact row-border text-center fs-6 mt-2"
+                                               class="table table-borderless table-hover display compact row-border border-top border-black text-center fs-6 mt-1"
+                                               style="width:100%"
                                         >
+                                            </col>
+                                            <colgroup span="2"></colgroup>
                                             <thead>
                                             <tr>
-                                                <th>Sample</th>
-                                                <th>ROI file</th>
-                                                <th>QA prep</th>
-                                                <th>Date</th>
-                                                <th>Lifetime (sec)</th>
-                                                <th>Fine gain</th>
-                                                <th>Coarse gain</th>
+                                                <th class="align-middle border-start border-black" rowspan="2">#</th>
+                                                <th class="align-middle border-start border-black" rowspan="2">Sample</th>
+                                                <th class="align-middle border-start border-black" rowspan="2">Reference</th>
+                                                <th class="align-middle border-start border-black" rowspan="2">ROI_file</th>
+                                                <th class="align-middle border-start border-black" rowspan="2">QA_prep</th>
+                                                <th class="align-middle border-start border-black" rowspan="2">Date</th>
+                                                <th class="align-middle border-start border-black" rowspan="2">Lifetime,sec</th>
+                                                <th class="border-end border-start border-black" colspan="5" scope="colgroup">Cs-137</th>
+                                                <th class="border-end border-black" colspan="5" scope="colgroup">Co-60</th>
+                                                <th class="border-end border-black" colspan="5" scope="colgroup">Am-241</th>
+                                            </tr>
+                                            <tr>
+                                                <th class="align-middle border-start border-black" scope="col">FWHM</th>
+                                                <th class="align-middle" scope="col">Pulsmax</th>
+                                                <th class="align-middle" scope="col">Centroid</th>
+                                                <th class="align-middle" scope="col">Netcounts</th>
+                                                <th class="border-end border-black" scope="col">Decay corrected</th>
+                                                <th class="align-middle" scope="col">FWHM</th>
+                                                <th class="align-middle" scope="col">Pulsmax</th>
+                                                <th class="align-middle" scope="col">Centroid</th>
+                                                <th class="align-middle" scope="col">Netcounts</th>
+                                                <th class="align-middle border-end border-black" scope="col">Decay corrected</th>
+                                                <th class="align-middle" scope="col">FWHM</th>
+                                                <th class="align-middle" scope="col">Pulsmax</th>
+                                                <th class="align-middle" scope="col">Centroid</th>
+                                                <th class="align-middle" scope="col">Netcounts</th>
+                                                <th class="border-end border-black" scope="col">Decay corrected</th>
                                             </tr>
                                             </thead>
                                             <tbody>
                                             {% for session in sessions %}
                                             <tr>
-                                                <td>{{ session.sample_name }}</td>
-                                                <td>{{ session.roi_file }}</td>
-                                                <td>{{ session.qa_prep }}</td>
-                                                <td>{{ session.measurement_date }}</td>
-                                                <td>{{ session.lifetime }}</td>
-                                                <td>{{ detector.fine_gain }}</td>
-                                                <td>{{ detector.coarse_gain }}</td>
+                                                <td class="align-middle">{{ session.session.pk }}</td>
+                                                <td class="align-middle">{{ session.session.sample_name }}</td>
+                                                {% if session.session.is_reference %}
+                                                    <td class="align-middle">+</td>
+                                                {% else %}
+                                                    <td class="align-middle">-</td>
+                                                {% endif %}
+                                                <td class="align-middle">{{ session.session.roi_file }}</td>
+                                                <td class="align-middle">{{ session.session.qa_prep }}</td>
+                                                <td class="align-middle">{{ session.session.measurement_date }}</td>
+                                                <td class="align-middle">{{ session.session.lifetime }}</td>
+                                                {% for roi in session.rois %}
+                                                    <td class="align-middle">{{ roi.fwhm }}</td>
+                                                    <td class="align-middle">{{ roi.pulsmax }}</td>
+                                                    <td class="align-middle">{{ roi.centroid }}</td>
+                                                    <td class="align-middle">{{ roi.netcounts }}</td>
+                                                    <td class="align-middle">{{ roi.decay_corr }}</td>
+                                                {% endfor %}
                                             </tr>
                                             {% endfor %}
                                             </tbody>

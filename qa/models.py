@@ -140,6 +140,7 @@ class Nuclide(models.Model):
 
 
 class Roi(models.Model):
+
     class RoiType(models.TextChoices):
         ROI = "ROI", _("ROI")
         INSERT = "INSERT", _("Insert")
@@ -152,17 +153,23 @@ class Roi(models.Model):
     centroid = models.DecimalField(
         verbose_name=_("Centroid"),
         max_digits=10,
-        decimal_places=2
+        decimal_places=2,
+        default=0.0,
     )
     net_count = models.PositiveBigIntegerField(
         verbose_name=_("Net Count")
     )
-    decay_corr = models.DecimalField(
-        verbose_name=_("Decay Correction"),
+    fwhm = models.DecimalField(
+        verbose_name=_("FWHM"),
         max_digits=10,
         decimal_places=2,
-        blank=True,
-        null=True
+        default=0.0
+    )
+    pulsmax = models.DecimalField(
+        verbose_name=_("Pulsmax Energy"),
+        max_digits=10,
+        decimal_places=2,
+        default=0.0
     )
     roi_type = models.CharField(
         choices=RoiType.choices,
@@ -189,7 +196,16 @@ class Roi(models.Model):
         diff = date_curr - ref_date.measurement_date
         if units == "Year":
             halflife = halflife * 365.25
+        if lifetime == 0:
+            return 0
         return round(exp((log(2)/halflife) * diff.days) * self.net_count / lifetime, 2)
+
+    @property
+    def counts_per_second(self):
+        lifetime = float(self.session_data.lifetime)
+        if lifetime == 0:
+            return 0
+        return self.net_count / lifetime
 
     def __str__(self):
         return f"Isotope: {self.nuclide.name}, with centroid in {self.centroid}"

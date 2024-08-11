@@ -23,7 +23,7 @@ class SessionDataAdmin(admin.ModelAdmin):
 @admin.register(Roi)
 class RoiAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at", )
-    fields = ["session_data", "centroid", "net_count", "roi_type", "nuclide"]
+    fields = ["session_data", "centroid", "net_count", "roi_type", "nuclide", "fwhm"]
 
 
 admin.site.register(Nuclide)
