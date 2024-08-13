@@ -34,6 +34,7 @@ def get_data(request):
                         "decay_corr": decay_corr
                     })
                 sessions.append({
+                    "det": det,
                     "session": session,
                     "rois": rois
                 })

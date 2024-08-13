@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container-fluid">
     <div class="title p-3 m-3 text-center bg-light border border-opacity-50 border-info-subtle rounded-3">
-        <h4>Quality Assurance managing panel</h4>
+        <h4>Quality Assurance management panel</h4>
         <div class="flex-container">
             <div class="d-flex flex-column flex-shrink-0">
                 <span class="text-center fw-bold pt-2">Parameters</span>
@@ -68,8 +68,10 @@
                                                 <th class="align-middle border-start border-black" rowspan="2">Sample</th>
                                                 <th class="align-middle border-start border-black" rowspan="2">Reference</th>
                                                 <th class="align-middle border-start border-black" rowspan="2">ROI_file</th>
+                                                <th class="align-middle border-start border-black" rowspan="2">Fine gain</th>
+                                                <th class="align-middle border-start border-black" rowspan="2">Coarse gain</th>
                                                 <th class="align-middle border-start border-black" rowspan="2">QA_prep</th>
-                                                <th class="align-middle border-start border-black" rowspan="2">Date</th>
+                                                <th class="align-middle border-start border-black" rowspan="2">Acquisition_date</th>
                                                 <th class="align-middle border-start border-black" rowspan="2">Lifetime,sec</th>
                                                 <th class="border-end border-start border-black" colspan="5" scope="colgroup">Cs-137</th>
                                                 <th class="border-end border-black" colspan="5" scope="colgroup">Co-60</th>
@@ -85,7 +87,9 @@
                                                 <th class="align-middle" scope="col">Pulsmax</th>
                                                 <th class="align-middle" scope="col">Centroid</th>
                                                 <th class="align-middle" scope="col">Netcounts</th>
-                                                <th class="align-middle border-end border-black" scope="col">Decay corrected</th>
+                                                <th class="align-middle border-end border-black" scope="col">Decay
+                                                    corrected
+                                                </th>
                                                 <th class="align-middle" scope="col">FWHM</th>
                                                 <th class="align-middle" scope="col">Pulsmax</th>
                                                 <th class="align-middle" scope="col">Centroid</th>
@@ -95,26 +99,63 @@
                                             </thead>
                                             <tbody>
                                             {% for session in sessions %}
-                                            <tr>
-                                                <td class="align-middle">{{ session.session.pk }}</td>
-                                                <td class="align-middle">{{ session.session.sample_name }}</td>
-                                                {% if session.session.is_reference %}
-                                                    <td class="align-middle">+</td>
+                                                {% if session.session.is_approved %}
+                                                    <tr class="table-success">
+                                                        <td class="align-middle">{{ session.session.pk }}</td>
+                                                        <td class="align-middle">{{ session.session.sample_name }}</td>
+                                                        {% if session.session.is_reference %}
+                                                            <td class="align-middle">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
+                                                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                                                    <path d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
+                                                                </svg>
+                                                            </td>
+                                                        {% else %}
+                                                            <td class="align-middle">-</td>
+                                                        {% endif %}
+                                                        <td class="align-middle">{{ session.session.roi_file }}</td>
+                                                        <td class="align-middle">{{ session.det.fine_gain }}</td>
+                                                        <td class="align-middle">{{ session.det.coarse_gain }}</td>
+                                                        <td class="align-middle">{{ session.session.qa_prep }}</td>
+                                                        <td class="align-middle">{{ session.session.measurement_date }}</td>
+                                                        <td class="align-middle">{{ session.session.lifetime }}</td>
+                                                        {% for roi in session.rois %}
+                                                        <td class="align-middle">{{ roi.fwhm }}</td>
+                                                        <td class="align-middle">{{ roi.pulsmax }}</td>
+                                                        <td class="align-middle">{{ roi.centroid }}</td>
+                                                        <td class="align-middle">{{ roi.netcounts }}</td>
+                                                        <td class="align-middle">{{ roi.decay_corr }}</td>
+                                                        {% endfor %}
+                                                    </tr>
                                                 {% else %}
-                                                    <td class="align-middle">-</td>
+                                                    <tr class="table-warning">
+                                                        <td class="align-middle">{{ session.session.pk }}</td>
+                                                        <td class="align-middle">{{ session.session.sample_name }}</td>
+                                                        {% if session.session.is_reference %}
+                                                            <td class="align-middle">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
+                                                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                                                    <path d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
+                                                                </svg>
+                                                            </td>
+                                                        {% else %}
+                                                            <td class="align-middle">-</td>
+                                                        {% endif %}
+                                                        <td class="align-middle">{{ session.session.roi_file }}</td>
+                                                        <td class="align-middle">{{ session.det.fine_gain }}</td>
+                                                        <td class="align-middle">{{ session.det.coarse_gain }}</td>
+                                                        <td class="align-middle">{{ session.session.qa_prep }}</td>
+                                                        <td class="align-middle">{{ session.session.measurement_date }}</td>
+                                                        <td class="align-middle">{{ session.session.lifetime }}</td>
+                                                        {% for roi in session.rois %}
+                                                            <td class="align-middle">{{ roi.fwhm }}</td>
+                                                            <td class="align-middle">{{ roi.pulsmax }}</td>
+                                                            <td class="align-middle">{{ roi.centroid }}</td>
+                                                            <td class="align-middle">{{ roi.netcounts }}</td>
+                                                            <td class="align-middle">{{ roi.decay_corr }}</td>
+                                                        {% endfor %}
+                                                    </tr>
                                                 {% endif %}
-                                                <td class="align-middle">{{ session.session.roi_file }}</td>
-                                                <td class="align-middle">{{ session.session.qa_prep }}</td>
-                                                <td class="align-middle">{{ session.session.measurement_date }}</td>
-                                                <td class="align-middle">{{ session.session.lifetime }}</td>
-                                                {% for roi in session.rois %}
-                                                    <td class="align-middle">{{ roi.fwhm }}</td>
-                                                    <td class="align-middle">{{ roi.pulsmax }}</td>
-                                                    <td class="align-middle">{{ roi.centroid }}</td>
-                                                    <td class="align-middle">{{ roi.netcounts }}</td>
-                                                    <td class="align-middle">{{ roi.decay_corr }}</td>
-                                                {% endfor %}
-                                            </tr>
                                             {% endfor %}
                                             </tbody>
                                         </table>

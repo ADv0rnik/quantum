@@ -81,6 +81,10 @@ class SessionData(models.Model):
         verbose_name=_("Is Reference"),
         default=False
     )
+    is_approved = models.BooleanField(
+        verbose_name=_("Approved session"),
+        default=False
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
