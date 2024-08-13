@@ -2,30 +2,37 @@
 
 {% block content %}
 <div class="container-fluid">
-    <div class="title p-3 m-3 text-center bg-light border border-opacity-50 border-info rounded-3">
-        <h4>Quality Assurance managing panel</h4>
-    </div>
-    <div class="row bg-light p-3 m-3 border border-opacity-50 border-info rounded-3">
-        <div class="col-sm-3">
-            <div class="d-flex flex-column flex-shrink-0" style="width: 100%;">
+    <div class="title p-3 m-3 text-center bg-light border border-opacity-50 border-info-subtle rounded-3">
+        <h4>Quality Assurance management panel</h4>
+        <div class="flex-container">
+            <div class="d-flex flex-column flex-shrink-0">
                 <span class="text-center fw-bold pt-2">Parameters</span>
-                <hr class="d-flex" style="width: 100%; border-width:0; margin: 0.5rem">
+                <hr class="d-flex" style="margin: 0.5rem">
             </div>
-            <div class="modal-body mx-3">
-                <form action="#" method="post" autocomplete="off">
+            <div class="modal-body mx-3 my-2">
+                <form action="{% url 'qa:datasheet' %}" method="post" autocomplete="off">
                     {% csrf_token %}
-                    <div class="form-floating mb-3 ">
-                        <select class="form-select rounded-3" name="countries" id="select" style="height: 2.5rem; width: 100%; padding-bottom: 0.5rem; padding-top: 0.5rem">
-                            <option value="">Choose detector</option>
-                            {% for detector in detectors %}
-                                <option value="{{ detector.code }}">{{ detector.code }}</option>
-                            {% endfor %}
-                        </select>
+                    <div class="row row-cols-lg-8 g-0 d-flex align-items-center justify-content-center">
+                        <div class="col-4">
+                            <div class="d-flex mx-3">
+                                <select class="w-75 form-select form-select-sm rounded-3" name="detector" id="select"
+                                        style="height: 2.5rem;">
+                                    <option value="">Choose detector</option>
+                                    {% for detector in detectors %}
+                                    <option value="{{ detector.code }}">{{ detector.code }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <button class="w-50 btn rounded-3 btn-warning" type="submit">Apply</button>
+                        </div>
                     </div>
-                    <button class="btn rounded-3 btn-warning" type="submit" style="max-width: 100%">Apply</button>
                 </form>
             </div>
         </div>
+    </div>
+    <div class="row bg-light p-3 m-3 border border-opacity-50 border-info-subtle rounded-3">
         <div class="col">
             <ul class="nav nav-tabs nav-justified" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">
@@ -43,9 +50,128 @@
             </ul>
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active p-3" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab"
-                     tabindex="0">Welcome to SB Admin Pro!
-                    Browse our fully designed UI toolkit! Browse our prebuilt app pages, components, and utilites, and
-                    be sure to look at our full documentation!
+                     tabindex="0">
+                    <div class="form-group" style="border-bottom: hidden">
+                        <fieldset>
+                            <form action="" class="form-group" method="post">
+                                <div class="table-responsive">
+                                    <div class="table-responsive">
+                                        <table id="session-data"
+                                               class="table table-borderless table-hover display compact row-border border-top border-black text-center fs-6 mt-1"
+                                               style="width:100%"
+                                        >
+                                            </col>
+                                            <colgroup span="2"></colgroup>
+                                            <thead>
+                                            <tr>
+                                                <th class="align-middle border-start border-black" rowspan="2">#</th>
+                                                <th class="align-middle border-start border-black" rowspan="2">Sample</th>
+                                                <th class="align-middle border-start border-black" rowspan="2">Reference</th>
+                                                <th class="align-middle border-start border-black" rowspan="2">ROI_file</th>
+                                                <th class="align-middle border-start border-black" rowspan="2">Fine gain</th>
+                                                <th class="align-middle border-start border-black" rowspan="2">Coarse gain</th>
+                                                <th class="align-middle border-start border-black" rowspan="2">QA_prep</th>
+                                                <th class="align-middle border-start border-black" rowspan="2">Acquisition_date</th>
+                                                <th class="align-middle border-start border-black" rowspan="2">Lifetime,sec</th>
+                                                <th class="border-end border-start border-black" colspan="5" scope="colgroup">Cs-137</th>
+                                                <th class="border-end border-black" colspan="5" scope="colgroup">Co-60</th>
+                                                <th class="border-end border-black" colspan="5" scope="colgroup">Am-241</th>
+                                            </tr>
+                                            <tr>
+                                                <th class="align-middle border-start border-black" scope="col">FWHM</th>
+                                                <th class="align-middle" scope="col">Pulsmax</th>
+                                                <th class="align-middle" scope="col">Centroid</th>
+                                                <th class="align-middle" scope="col">Netcounts</th>
+                                                <th class="border-end border-black" scope="col">Decay corrected</th>
+                                                <th class="align-middle" scope="col">FWHM</th>
+                                                <th class="align-middle" scope="col">Pulsmax</th>
+                                                <th class="align-middle" scope="col">Centroid</th>
+                                                <th class="align-middle" scope="col">Netcounts</th>
+                                                <th class="align-middle border-end border-black" scope="col">Decay
+                                                    corrected
+                                                </th>
+                                                <th class="align-middle" scope="col">FWHM</th>
+                                                <th class="align-middle" scope="col">Pulsmax</th>
+                                                <th class="align-middle" scope="col">Centroid</th>
+                                                <th class="align-middle" scope="col">Netcounts</th>
+                                                <th class="border-end border-black" scope="col">Decay corrected</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for session in sessions %}
+                                                {% if session.session.is_approved %}
+                                                    <tr class="table-success">
+                                                        <td class="align-middle">{{ session.session.pk }}</td>
+                                                        <td class="align-middle">{{ session.session.sample_name }}</td>
+                                                        {% if session.session.is_reference %}
+                                                            <td class="align-middle">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
+                                                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                                                    <path d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
+                                                                </svg>
+                                                            </td>
+                                                        {% else %}
+                                                            <td class="align-middle">-</td>
+                                                        {% endif %}
+                                                        <td class="align-middle">{{ session.session.roi_file }}</td>
+                                                        <td class="align-middle">{{ session.det.fine_gain }}</td>
+                                                        <td class="align-middle">{{ session.det.coarse_gain }}</td>
+                                                        <td class="align-middle">{{ session.session.qa_prep }}</td>
+                                                        <td class="align-middle">{{ session.session.measurement_date }}</td>
+                                                        <td class="align-middle">{{ session.session.lifetime }}</td>
+                                                        {% for roi in session.rois %}
+                                                        <td class="align-middle">{{ roi.fwhm }}</td>
+                                                        <td class="align-middle">{{ roi.pulsmax }}</td>
+                                                        <td class="align-middle">{{ roi.centroid }}</td>
+                                                        <td class="align-middle">{{ roi.netcounts }}</td>
+                                                        <td class="align-middle">{{ roi.decay_corr }}</td>
+                                                        {% endfor %}
+                                                    </tr>
+                                                {% else %}
+                                                    <tr class="table-warning">
+                                                        <td class="align-middle">{{ session.session.pk }}</td>
+                                                        <td class="align-middle">{{ session.session.sample_name }}</td>
+                                                        {% if session.session.is_reference %}
+                                                            <td class="align-middle">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
+                                                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                                                    <path d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
+                                                                </svg>
+                                                            </td>
+                                                        {% else %}
+                                                            <td class="align-middle">-</td>
+                                                        {% endif %}
+                                                        <td class="align-middle">{{ session.session.roi_file }}</td>
+                                                        <td class="align-middle">{{ session.det.fine_gain }}</td>
+                                                        <td class="align-middle">{{ session.det.coarse_gain }}</td>
+                                                        <td class="align-middle">{{ session.session.qa_prep }}</td>
+                                                        <td class="align-middle">{{ session.session.measurement_date }}</td>
+                                                        <td class="align-middle">{{ session.session.lifetime }}</td>
+                                                        {% for roi in session.rois %}
+                                                            <td class="align-middle">{{ roi.fwhm }}</td>
+                                                            <td class="align-middle">{{ roi.pulsmax }}</td>
+                                                            <td class="align-middle">{{ roi.centroid }}</td>
+                                                            <td class="align-middle">{{ roi.netcounts }}</td>
+                                                            <td class="align-middle">{{ roi.decay_corr }}</td>
+                                                        {% endfor %}
+                                                    </tr>
+                                                {% endif %}
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </form>
+                        </fieldset>
+                    </div>
+                    <script>
+                        $(document).ready(function () {
+                            $('#session-data').DataTable({
+                                pageLength: 5,
+                                scrollX: true
+                            });
+                        });
+                    </script>
                 </div>
                 <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab"
                      tabindex="0">...

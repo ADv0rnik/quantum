@@ -12,4 +12,42 @@ def index(request):
 
 
 def get_data(request):
-    pass
+    try:
+        if request.method == "POST":
+            detector_code = request.POST.get('detector')
+            det = Detector.objects.prefetch_related("session_detector").filter(code=detector_code).first()
+            session_data = det.session_detector.all()
+            sessions = []
+            for session in session_data:
+                rois = []
+                for spectrum in session.spectrum.all():
+                    fwhm = spectrum.fwhm
+                    pulsmax = spectrum.pulsmax
+                    centroid = spectrum.centroid
+                    netcounts = round(spectrum.counts_per_second, 2)
+                    decay_corr = round(spectrum.calculate_decay_correction, 2)
+                    rois.append({
+                        "fwhm": fwhm,
+                        "pulsmax": pulsmax,
+                        "centroid": centroid,
+                        "netcounts": netcounts,
+                        "decay_corr": decay_corr
+                    })
+                sessions.append({
+                    "det": det,
+                    "session": session,
+                    "rois": rois
+                })
+    except Exception as e:
+        return render(request, 'server_error.html', context={})
+    else:
+        context = {
+                "sessions": sessions,
+                "detector": det,
+            }
+        print(context)
+        return render(
+            request,
+            'dashboard.html',
+            context=context
+        )
