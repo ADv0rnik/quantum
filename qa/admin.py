@@ -5,7 +5,7 @@ from qa.models import Detector, SessionData, Roi, Nuclide
 class SpectrumInline(admin.TabularInline):
     model = Roi
     readonly_fields = ("created_at",)
-    fields = ["centroid", "net_count", "nuclide"]
+    fields = ["centroid", "fwhm", "pulsmax", "net_count", "nuclide"]
 
 
 @admin.register(Detector)
@@ -23,7 +23,7 @@ class SessionDataAdmin(admin.ModelAdmin):
 @admin.register(Roi)
 class RoiAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at", )
-    fields = ["session_data", "centroid", "net_count", "roi_type", "nuclide", "fwhm"]
+    fields = ["session_data", "centroid", "net_count", "roi_type", "nuclide", "fwhm", "pulsmax"]
 
 
 admin.site.register(Nuclide)

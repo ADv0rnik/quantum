@@ -95,7 +95,7 @@ class SessionData(models.Model):
         return formatted_date
 
     def __str__(self):
-        return f"{self.sample_name}: {self.date_to_string()}"
+        return f"{self.sample_name}: {self.measurement_date}"
 
     class Meta:
         verbose_name = _("Session Data")
@@ -116,7 +116,7 @@ class Nuclide(models.Model):
         null=False,
     )
     energy = models.DecimalField(
-        verbose_name=_("Energy"),
+        verbose_name=_("Energy, keV"),
         max_digits=10,
         decimal_places=2,
     )
@@ -212,7 +212,7 @@ class Roi(models.Model):
         return self.net_count / lifetime
 
     def __str__(self):
-        return f"Isotope: {self.nuclide.name}, with centroid in {self.centroid}"
+        return f"Isotope: {self.nuclide.name}, in session {self.session_data.sample_name}, {self.session_data.measurement_date}"
 
     class Meta:
         verbose_name = _("ROI")
