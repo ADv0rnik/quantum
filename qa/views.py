@@ -2,6 +2,7 @@ from django.contrib import messages
 
 from django.shortcuts import render
 from qa.models import Detector
+from qa.utils import create_chart
 
 
 def index(request):
@@ -43,11 +44,14 @@ def get_data(request):
                         "session": session,
                         "rois": rois
                     })
+
+                # chart = create_chart(data=sessions)
                 context = {
                     "sessions": sessions,
                     "detector": det,
                     "detectors": detectors,
                 }
+
             else:
                 context = {"detectors": detectors}
                 messages.info(request, "Please select a detector")
